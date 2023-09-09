@@ -91,9 +91,9 @@ namespace C2GUILauncher {
             // DESNOTE(2023-08-28, jbarber): We check for the exe name here 
             // because we assume we are already installed in that case. We 
             // check if we're in steam already, because steam users may 
-            // install the launcher without it being named Chivalry2Launcher;
+            // install the launcher without it being named gamelaunchhelper;
             // it just needs to be in the steam dir to function.
-            if (exeName != "Chivalry2Launcher" && !Path.Equals(curDir, steamDir)) {
+            if (exeName != "gamelaunchhelper" && !Path.Equals(curDir, steamDir)) {
                 var installResult = Install(steamDir, egsDir);
 
                 switch (installResult) {

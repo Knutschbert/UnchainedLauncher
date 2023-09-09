@@ -126,9 +126,9 @@ namespace C2GUILauncher.ViewModels {
                         string powershellCommand =
                         $"Wait-Process -Id {Environment.ProcessId}; " +
                         $"Start-Sleep -Milliseconds 500; " +
-                        $"Move-Item -Force C2GUILauncher.exe Chivalry2Launcher.exe;" +
+                        $"Move-Item -Force C2GUILauncher.exe gamelaunchhelper.exe;" +
                         $"Start-Sleep -Milliseconds 500; " +
-                        $".\\Chivalry2Launcher.exe {commandLinePass}";
+                        $".\\gamelaunchhelper.exe {commandLinePass}";
                         pwsh.StartInfo.Arguments = $"-Command \"{powershellCommand}\"";
                         pwsh.StartInfo.CreateNoWindow = true;
                         pwsh.Start();

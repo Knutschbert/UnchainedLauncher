@@ -23,11 +23,11 @@ namespace C2GUILauncher.ViewModels {
         public static bool AttemptInstall(string installDir, InstallationType installType) {
             bool specific = installType != InstallationType.NotSet;
             string exeName = Process.GetCurrentProcess().ProcessName;
-            if (exeName != "Chivalry2Launcher") {
+            if (exeName != "gamelaunchhelper") {
                 MessageBoxResult dialogResult = MessageBox.Show(
                    $"This program is not currently running in place of the default Chivalry 2 launcher.\n\n" +
                    $"Do you want this launcher to move itself in place of the Chivalry 2 launcher? The " +
-                   $"default launcher will remain as 'Chivalry2Launcher-ORIGINAL.exe'\n\n" +
+                   $"default launcher will remain as 'gamelaunchhelper-ORIGINAL.exe'\n\n" +
                    $"This will make the launcher start automatically when you launch via Epic Games or " +
                    $"Steam.\n\nDoing this is required if you are playing on Epic!",
                    "Replace launcher?", MessageBoxButton.YesNoCancel);
@@ -38,7 +38,7 @@ namespace C2GUILauncher.ViewModels {
                     pwsh.StartInfo.FileName = "powershell.exe";
                     string commandLinePass = string.Join(" ", Environment.GetCommandLineArgs().Skip(1));
 
-                    string? originalLauncherPath = GetLauncherOnPath(specific ? installDir : "Chivalry2Launcher.exe");
+                    string? originalLauncherPath = GetLauncherOnPath(specific ? installDir : "gamelaunchhelper.exe");
                     if (originalLauncherPath == null) {
                         MessageBox.Show("Unable to move: Failed to get the path to the original launcher");
                         return false;
@@ -54,10 +54,11 @@ namespace C2GUILauncher.ViewModels {
                         powershellCommand =
                             $"Wait-Process -Id {Environment.ProcessId}; " +
                             $"Start-Sleep -Milliseconds 500; " +
-                            $"Move-Item -Force \\\"{originalLauncherPath}\\\" \\\"{originalLauncherDir}\\Chivalry2Launcher-ORIGINAL.exe\\\"; " +
-                            $"Move-Item -Force \\\"{exeName}.exe\\\" \\\"{originalLauncherDir}\\Chivalry2Launcher.exe\\\"; " +
+                            $"Move-Item -Force \\\"{originalLauncherPath}\\\" \\\"{originalLauncherDir}\\gamelaunchhelper-ORIGINAL.exe\\\"; " +
+                            $"Move-Item -Force \\\"{exeName}.exe\\\" \\\"{originalLauncherDir}\\gamelaunchhelper.exe\\\"; " +
                             $"Start-Sleep -Milliseconds 500; " +
-                            $"Start-Process \\\"{originalLauncherDir}\\Chivalry2Launcher.exe\\\" -WorkingDirectory \\\"{originalLauncherDir}\\\" {commandLinePass}";
+                            $"Start-Process \\\"{originalLauncherDir}\\gamelaunchhelper.exe\\\" -WorkingDirectory \\\"{originalLauncherDir}\\\" {commandLinePass}";
+
                     } else {
                         powershellCommand =
                             $"Wait-Process -Id {Environment.ProcessId}; " +
@@ -78,8 +79,8 @@ namespace C2GUILauncher.ViewModels {
 
         private static string? SearchDirForLauncher(string dir) {
             string launcherDir = Path.GetDirectoryName(dir) ?? "";
-            string launcherOriginalPath = Path.Combine(launcherDir, "Chivalry2Launcher-ORIGINAL.exe");
-            string launcherDefaultPath = Path.Combine(launcherDir, "Chivalry2Launcher.exe");
+            string launcherOriginalPath = Path.Combine(launcherDir, "gamelaunchhelper-ORIGINAL.exe");
+            string launcherDefaultPath = Path.Combine(launcherDir, "gamelaunchhelper.exe");
 
             if (File.Exists(launcherOriginalPath)) {
                 return launcherOriginalPath;
@@ -91,14 +92,14 @@ namespace C2GUILauncher.ViewModels {
         }
 
         private static string? GetLauncherOnPath(string dir) {
-            //string? originalLauncherPath = SearchDirForLauncher("Chivalry2Launcher.exe");
-            string? originalLauncherPath = SearchDirForLauncher(Path.Combine(dir, "Chivalry2Launcher.exe"));
+            //string? originalLauncherPath = SearchDirForLauncher("gamelaunchhelper.exe");
+            string? originalLauncherPath = SearchDirForLauncher(Path.Combine(dir, "gamelaunchhelper.exe"));
             //try to find it as a relative path
             if (originalLauncherPath == null || !File.Exists(originalLauncherPath)) {
                 do {
                     //MessageBox.Show("Starting file dialogue");
                     var filePicker = new Microsoft.Win32.OpenFileDialog {
-                        Title = "Select chivalry2Launcher.exe in your chivalry 2 install folder",
+                        Title = "Select gamelaunchhelper.exe in your chivalry 2 install folder",
                         Filter = "Executable file | *.exe",
                         Multiselect = false,
                         InitialDirectory = "C:\\Program Files (x86)\\Epic Games\\Games\\Chivalry2",
