@@ -68,8 +68,9 @@ namespace C2GUILauncher {
             // If we're already in the install dir, we don't need to do anything. 
             // If a TBL dir is in the current dir, and we're not in the source code dir, we're probably in the install dir.
             var alreadyInInstallDir = steamDir == curDir || egsDir == curDir || (Directory.Exists(Path.Combine(curDir, "TBL")) && !curDir.Contains("C2GUILauncher\\C2GUILauncher"));
+            var noInstallDirDetected = steamDir == null && egsDir == null;
 
-            if (alreadyInInstallDir)
+            if (alreadyInInstallDir || noInstallDirDetected)
                 return InstallerViewModel.AttemptInstall("", InstallationType.NotSet) ? InstallResult.Installed : InstallResult.Failed;
 
             InstallResult steamInstallResult = ShowInstallRequestFor(curDir, steamDir, InstallationType.Steam);
@@ -88,12 +89,16 @@ namespace C2GUILauncher {
             var curDir = Directory.GetCurrentDirectory();
             var exeName = Process.GetCurrentProcess().ProcessName;
 
+            var foundInstallDir = egsDir != null || steamDir != null;
+
+            var isWine = Process.GetProcessesByName("winlogon").Length == 0;
+
             // DESNOTE(2023-08-28, jbarber): We check for the exe name here 
             // because we assume we are already installed in that case. We 
             // check if we're in steam already, because steam users may 
             // install the launcher without it being named Chivalry2Launcher;
             // it just needs to be in the steam dir to function.
-            if (exeName != "Chivalry2Launcher" && !Path.Equals(curDir, steamDir)) {
+            if (exeName != "Chivalry2Launcher" && !Path.Equals(curDir, steamDir) && !isWine) {
                 var installResult = Install(steamDir, egsDir);
 
                 switch (installResult) {
