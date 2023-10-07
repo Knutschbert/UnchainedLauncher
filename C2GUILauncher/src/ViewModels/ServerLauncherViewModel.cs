@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using log4net.Repository.Hierarchy;
 using log4net;
+using System.Text.RegularExpressions;
 
 namespace C2GUILauncher.ViewModels {
     [AddINotifyPropertyChangedInterface]
@@ -245,13 +246,13 @@ namespace C2GUILauncher.ViewModels {
             serverRegister.StartInfo.FileName = "cmd.exe";
 
             string registerCommand = $"RegisterUnchainedServer.exe " +
-                $"-n \"{ServerName.Replace("\"", "\"")}\" " +
-                $"-d \"{ServerDescription.Replace("\"", "\"").Replace("\n", "\n")}\" " +
-                $"-r \"{SettingsViewModel.ServerBrowserBackend}\" " +
-                $"-c \"{RconPort}\" " +
-                $"-a \"{A2sPort}\" " +
-                $"-p \"{PingPort}\" " +
-                $"-g \"{GamePort}\" ";
+                $"-n {EscapeCLIArgument(ServerName)} " +
+                $"-d {EscapeCLIArgument(ServerDescription)} " +
+                $"-r {EscapeCLIArgument(SettingsViewModel.ServerBrowserBackend)} " +
+                $"-c {EscapeCLIArgument(RconPort.ToString())} " +
+                $"-a {EscapeCLIArgument(A2sPort.ToString())} " +
+                $"-p {EscapeCLIArgument(PingPort.ToString())} " +
+                $"-g {EscapeCLIArgument(GamePort.ToString())} ";
 
             if (!ShowInServerBrowser) {
                 registerCommand += "--no-register ";
@@ -268,5 +269,16 @@ namespace C2GUILauncher.ViewModels {
 
             return serverRegister;
         }
+
+        private string EscapeCLIArgument(string arg) {
+            return "\"" + 
+                Regex.Replace(arg, @"(\\+)$", @"$1$1")
+                    .Replace("\n", "\n^")
+                    .Replace("\"", "\\\"") + 
+                "\"";
+        }
     }
+
+    
+
 }
